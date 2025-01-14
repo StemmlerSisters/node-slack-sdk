@@ -1,15 +1,25 @@
 // This file contains objects documented here: https://api.slack.com/reference/block-kit/block-elements
 
-import {
+import type { RichTextBlock } from './blocks';
+import type {
+  ColorScheme,
+  Option,
+  PlainTextElement,
+  PlainTextOption,
+  SlackFileImageObject,
+  UrlImageObject,
+} from './composition-objects';
+import type {
   Actionable,
   Confirmable,
   Dispatchable,
   Focusable,
+  MaxItemsSelectable,
   Placeholdable,
+  RichTextBorderable,
   RichTextStyleable,
+  URLRespondable,
 } from './extensions';
-import { Option, PlainTextElement, PlainTextOption } from './composition-objects';
-import { RichTextBlock } from './blocks';
 
 /**
  * @description Allows users a direct path to performing basic actions.
@@ -45,7 +55,7 @@ export interface Button extends Actionable, Confirmable {
    * more sparingly than primary.
    * If you don't include this field, the default button style will be used.
    */
-  style?: 'danger' | 'primary';
+  style?: ColorScheme;
   /**
    * @description A label for longer descriptive text about a button element. This label will be read out by screen
    * readers instead of the button `text` object. Maximum length for this field is 75 characters.
@@ -156,20 +166,16 @@ export interface FileInput extends Actionable {
  * only an image in it.
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#image Image element reference}.
  */
-export interface ImageElement {
+export type ImageElement = {
   /**
    * @description The type of element. In this case `type` is always `image`.
    */
   type: 'image';
   /**
-   * @description The URL of the image to be displayed.
-   */
-  image_url: string;
-  /**
    * @description A plain-text summary of the image. This should not contain any markup.
    */
   alt_text: string;
-}
+} & (UrlImageObject | SlackFileImageObject);
 
 /*
  * Multi-select and Select menus follow
@@ -198,7 +204,11 @@ export type Select = UsersSelect | StaticSelect | ConversationsSelect | Channels
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
 export type MultiSelect =
-  MultiUsersSelect | MultiStaticSelect | MultiConversationsSelect | MultiChannelsSelect | MultiExternalSelect;
+  | MultiUsersSelect
+  | MultiStaticSelect
+  | MultiConversationsSelect
+  | MultiChannelsSelect
+  | MultiExternalSelect;
 
 /**
  * @description This select menu will populate its options with a list of Slack users visible to the current user in the
@@ -223,7 +233,7 @@ export interface UsersSelect extends Actionable, Confirmable, Focusable, Placeho
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#users_multi_select Multi-select menu of users reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface MultiUsersSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface MultiUsersSelect extends Actionable, Confirmable, Focusable, MaxItemsSelectable, Placeholdable {
   /**
    * @description The type of element. In this case `type` is always `multi_users_select`.
    */
@@ -232,10 +242,6 @@ export interface MultiUsersSelect extends Actionable, Confirmable, Focusable, Pl
    * @description An array of user IDs of any valid users to be pre-selected when the menu loads.
    */
   initial_users?: string[];
-  /**
-   * @description Specifies the maximum number of items that can be selected in the menu. Minimum number is `1`.
-   */
-  max_selected_items?: number;
 }
 
 /**
@@ -281,7 +287,7 @@ export interface StaticSelect extends Actionable, Confirmable, Focusable, Placeh
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#static_multi_select Multi-select menu of static options reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface MultiStaticSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface MultiStaticSelect extends Actionable, Confirmable, Focusable, MaxItemsSelectable, Placeholdable {
   /**
    * @description The type of element. In this case `type` is always `multi_static_select`.
    */
@@ -310,10 +316,6 @@ export interface MultiStaticSelect extends Actionable, Confirmable, Focusable, P
     label: PlainTextElement;
     options: PlainTextOption[];
   }[];
-  /**
-   * @description Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
-   */
-  max_selected_items?: number;
 }
 
 /**
@@ -322,7 +324,7 @@ export interface MultiStaticSelect extends Actionable, Confirmable, Focusable, P
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#conversations_select Select menu of conversations reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface ConversationsSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface ConversationsSelect extends Actionable, Confirmable, Focusable, Placeholdable, URLRespondable {
   /**
    * @description The type of element. In this case `type` is always `conversations_select`.
    */
@@ -332,15 +334,6 @@ export interface ConversationsSelect extends Actionable, Confirmable, Focusable,
    * `default_to_current_conversation` is also supplied, `initial_conversation` will take precedence.
    */
   initial_conversation?: string;
-  // TODO: maybe factor out `response_url_enabled` into its own mixin as part of `extensions.ts`?
-  // this is used in channel select too
-  /**
-   * @description When set to `true`, the {@link https://api.slack.com/reference/interaction-payloads/views#view_submission `view_submission` payload}
-   * from the menu's parent view will contain a `response_url`. This `response_url` can be used for
-   * {@link https://api.slack.com/interactivity/handling#message_responses message responses}. The target conversation
-   * for the message will be determined by the value of this select menu.
-   */
-  response_url_enabled?: boolean;
   /**
    * @description Pre-populates the select menu with the conversation that the user was viewing when they opened the
    * modal, if available. Default is `false`.
@@ -349,7 +342,8 @@ export interface ConversationsSelect extends Actionable, Confirmable, Focusable,
   /**
    * @description A filter object that reduces the list of available conversations using the specified criteria.
    */
-  filter?: { // TODO: breaking change: replace with ConversationFilter object from composition-objects
+  filter?: {
+    // TODO: breaking change: replace with ConversationFilter object from composition-objects
     include?: ('im' | 'mpim' | 'private' | 'public')[];
     exclude_external_shared_channels?: boolean;
     exclude_bot_users?: boolean;
@@ -364,7 +358,12 @@ export interface ConversationsSelect extends Actionable, Confirmable, Focusable,
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#conversation_multi_select Multi-select menu of conversations reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface MultiConversationsSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface MultiConversationsSelect
+  extends Actionable,
+    Confirmable,
+    Focusable,
+    MaxItemsSelectable,
+    Placeholdable {
   /**
    * @description The type of element. In this case `type` is always `conversations_select`.
    */
@@ -375,11 +374,6 @@ export interface MultiConversationsSelect extends Actionable, Confirmable, Focus
    * `default_to_current_conversation` is also supplied, `initial_conversation` will be ignored.
    */
   initial_conversations?: string[];
-  // TODO: factor `max_selected_items` into its own extension / mixin?
-  /**
-   * @description Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
-   */
-  max_selected_items?: number;
   /**
    * @description Pre-populates the select menu with the conversation that the user was viewing when they opened the
    * modal, if available. Default is `false`.
@@ -388,7 +382,8 @@ export interface MultiConversationsSelect extends Actionable, Confirmable, Focus
   /**
    * @description A filter object that reduces the list of available conversations using the specified criteria.
    */
-  filter?: { // TODO: breaking change: replace with ConversationFilter object from composition-objects
+  filter?: {
+    // TODO: breaking change: replace with ConversationFilter object from composition-objects
     include?: ('im' | 'mpim' | 'private' | 'public')[];
     exclude_external_shared_channels?: boolean;
     exclude_bot_users?: boolean;
@@ -401,7 +396,7 @@ export interface MultiConversationsSelect extends Actionable, Confirmable, Focus
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#channels_select Select menu of public channels reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface ChannelsSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface ChannelsSelect extends Actionable, Confirmable, Focusable, Placeholdable, URLRespondable {
   /**
    * @description The type of element. In this case `type` is always `channels_select`.
    */
@@ -410,15 +405,6 @@ export interface ChannelsSelect extends Actionable, Confirmable, Focusable, Plac
    * @description The ID of any valid public channel to be pre-selected when the menu loads.
    */
   initial_channel?: string;
-  // TODO: maybe factor out `response_url_enabled` into its own mixin as part of `extensions.ts`?
-  // this is used in convo selects too
-  /**
-   * @description When set to `true`, the {@link https://api.slack.com/reference/interaction-payloads/views#view_submission `view_submission` payload}
-   * from the menu's parent view will contain a `response_url`. This `response_url` can be used for
-   * {@link https://api.slack.com/interactivity/handling#message_responses message responses}. The target channel
-   * for the message will be determined by the value of this select menu.
-   */
-  response_url_enabled?: boolean;
 }
 
 /**
@@ -427,21 +413,16 @@ export interface ChannelsSelect extends Actionable, Confirmable, Focusable, Plac
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#channel_multi_select Multi-select menu of public channels reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface MultiChannelsSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface MultiChannelsSelect extends Actionable, Confirmable, Focusable, MaxItemsSelectable, Placeholdable {
   /**
    * @description The type of element. In this case `type` is always `multi_channels_select`.
    */
   type: 'multi_channels_select';
-  // TODO: breaking change: change type to enforce "at least one" array restriction
+  // TODO: breaking change: change type to enforce 'at least one' array restriction
   /**
    * @description An array of one or more IDs of any valid public channel to be pre-selected when the menu loads.
    */
   initial_channels?: string[];
-  // TODO: maybe factor out `max_selected_items` into its own mixin in `extensions.ts`?
-  /**
-   * @description Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
-   */
-  max_selected_items?: number;
 }
 
 /**
@@ -473,7 +454,7 @@ export interface ExternalSelect extends Actionable, Confirmable, Focusable, Plac
  * @see {@link https://api.slack.com/reference/block-kit/block-elements#external_multi_select Multi-select menu of external data source reference}.
  * @see {@link https://api.slack.com/interactivity/handling This is an interactive component - see our guide to enabling interactivity}.
  */
-export interface MultiExternalSelect extends Actionable, Confirmable, Focusable, Placeholdable {
+export interface MultiExternalSelect extends Actionable, Confirmable, Focusable, MaxItemsSelectable, Placeholdable {
   /**
    * @description The type of element. In this case `type` is always `multi_external_select`.
    */
@@ -489,11 +470,6 @@ export interface MultiExternalSelect extends Actionable, Confirmable, Focusable,
    * of typed characters required before dispatch. The default value is `3`.
    */
   min_query_length?: number;
-  // TODO: maybe factor out `max_selected_items` into its own mixin in `extensions.ts`?
-  /**
-   * @description Specifies the maximum number of items that can be selected in the menu. Minimum number is 1.
-   */
-  max_selected_items?: number;
 }
 
 /*
@@ -532,7 +508,7 @@ export interface NumberInput extends Actionable, Dispatchable, Focusable, Placeh
 
 /**
  * @description Allows users to press a button to view a list of options.
- * Unlike the select menu, there is no typeahead field, and the button always appears with an ellipsis ("…") rather
+ * Unlike the select menu, there is no typeahead field, and the button always appears with an ellipsis ('…') rather
  * than customizable text. As such, it is usually used if you want a more compact layout than a select menu, or to
  * supply a list of less visually important actions after a row of buttons. You can also specify simple URL links as
  * overflow menu options, instead of actions.
@@ -622,7 +598,7 @@ export interface Timepicker extends Actionable, Confirmable, Focusable, Placehol
    */
   initial_time?: string;
   /**
-   * @description A string in the IANA format, e.g. "America/Chicago". The timezone is displayed to end users as hint
+   * @description A string in the IANA format, e.g. 'America/Chicago'. The timezone is displayed to end users as hint
    * text underneath the time picker. It is also passed to the app upon certain interactions, such as view_submission.
    */
   timezone?: string;
@@ -687,7 +663,7 @@ export interface WorkflowButton extends Confirmable {
          */
         value: string;
       }[];
-    }
+    };
   };
   /**
    * @description Decorates buttons with alternative visual color schemes. Use this option with restraint.
@@ -697,7 +673,7 @@ export interface WorkflowButton extends Confirmable {
    * more sparingly than primary.
    * If you don't include this field, the default button style will be used.
    */
-  style?: 'danger' | 'primary';
+  style?: ColorScheme;
   /**
    * @description A label for longer descriptive text about a button element. This label will be read out by screen
    * readers instead of the button `text` object. Maximum length for this field is 75 characters.
@@ -896,8 +872,17 @@ export interface RichTextUsergroupMention extends RichTextStyleable {
 /**
  * @description Union of rich text sub-elements for use within rich text blocks.
  */
-export type RichTextElement = RichTextBroadcastMention | RichTextColor | RichTextChannelMention | RichTextDate |
-RichTextEmoji | RichTextLink | RichTextTeamMention | RichTextText | RichTextUserMention | RichTextUsergroupMention;
+export type RichTextElement =
+  | RichTextBroadcastMention
+  | RichTextColor
+  | RichTextChannelMention
+  | RichTextDate
+  | RichTextEmoji
+  | RichTextLink
+  | RichTextTeamMention
+  | RichTextText
+  | RichTextUserMention
+  | RichTextUsergroupMention;
 
 /**
  * @description A section block within a rich text field.
@@ -913,7 +898,7 @@ export interface RichTextSection {
 /**
  * @description A list block within a rich text field.
  */
-export interface RichTextList {
+export interface RichTextList extends RichTextBorderable {
   /**
    * @description The type of element. In this case `type` is always `rich_text_list`.
    */
@@ -932,17 +917,12 @@ export interface RichTextList {
    * or characters rendered as the list points. Also affected by the `style` property.
    */
   indent?: number;
-  /**
-   * @description Whether to render a quote-block-like border on the inline side of the list. `0` renders no border
-   * while `1` renders a border.
-   */
-  border?: 0 | 1;
 }
 
 /**
  * @description A quote block within a rich text field.
  */
-export interface RichTextQuote {
+export interface RichTextQuote extends RichTextBorderable {
   /**
    * @description The type of element. In this case `type` is always `rich_text_quote`.
    */
@@ -951,17 +931,12 @@ export interface RichTextQuote {
    * @description An array of {@link RichTextElement} comprising the quote block.
    */
   elements: RichTextElement[];
-  /**
-   * @description Whether to render a quote-block-like border on the inline side of the text quote.
-   * `0` renders no border, while `1` renders a border. Defaults to `0`.
-   */
-  border?: 0 | 1;
 }
 
 /**
  * @description A block of preformatted text within a rich text field.
  */
-export interface RichTextPreformatted {
+export interface RichTextPreformatted extends RichTextBorderable {
   /**
    * @description The type of element. In this case `type` is always `rich_text_preformatted`.
    */
@@ -970,11 +945,6 @@ export interface RichTextPreformatted {
    * @description An array of either {@link RichTextLink} or {@link RichTextText} comprising the preformatted text.
    */
   elements: (RichTextText | RichTextLink)[];
-  /**
-   * @description Whether to render a quote-block-like border on the inline side of the preformatted text.
-   * `0` renders no border, while `1` renders a border. Defaults to `0`.
-   */
-  border?: 0 | 1;
 }
 
 /**

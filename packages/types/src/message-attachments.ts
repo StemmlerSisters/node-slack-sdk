@@ -1,5 +1,5 @@
-import { PlainTextElement } from './block-kit/composition-objects';
-import { Block, KnownBlock } from './block-kit/blocks';
+import type { AnyBlock } from './block-kit/blocks';
+import type { PlainTextElement } from './block-kit/composition-objects';
 
 // TODO: breaking changes, use discriminated union for `fallback`, `text` and `block` properties, maybe LegacyAttachment
 // vs. BlocksAttachment? as per https://api.slack.com/reference/messaging/attachments#legacy_fields
@@ -18,7 +18,7 @@ export interface MessageAttachment {
    * @description An array of {@link KnownBlock layout blocks} in the same format
    * {@link https://api.slack.com/block-kit/building as described in the building blocks guide}.
    */
-  blocks?: (KnownBlock | Block)[];
+  blocks?: AnyBlock[];
   /**
    * @description A plain text summary of the attachment used in clients that
    * don't show formatted text (e.g. mobile notifications).
@@ -102,8 +102,8 @@ export interface MessageAttachment {
    * relative to the present. Form factors, like mobile versus desktop may also transform its rendered appearance.
    */
   ts?: string;
-  actions?: AttachmentAction[]; // TODO: not documented in https://api.slack.com/reference/messaging/attachments
-  callback_id?: string; // TODO: not documented in https://api.slack.com/reference/messaging/attachments
+  actions?: AttachmentAction[]; // TODO: https://api.slack.com/legacy/message-buttons#crafting_your_message
+  callback_id?: string; // TODO: https://api.slack.com/legacy/message-buttons#crafting_your_message
   /**
    * @description Field names that should be {@link https://api.slack.com/reference/surfaces/formatting#basics formatted by `mrkdwn` syntax}.
    * The fields that can be formatted in this way include the names of the `fields` property, or
@@ -138,9 +138,8 @@ export interface MessageAttachmentField {
   short?: boolean;
 }
 
-// TODO: unclear what this is or how to use this
 // https://api.slack.com/methods/chat.unfurl#markdown
-export interface MessageAttachmentPreview {
+interface MessageAttachmentPreview {
   type?: string;
   can_remove?: boolean;
   title?: PlainTextElement;
@@ -148,8 +147,7 @@ export interface MessageAttachmentPreview {
   iconUrl?: string;
 }
 
-// TODO: unclear what this is or how to use this
-export interface AttachmentAction {
+interface AttachmentAction {
   id?: string;
   confirm?: Confirmation;
   data_source?: 'static' | 'channels' | 'conversations' | 'users' | 'external';
@@ -157,7 +155,7 @@ export interface AttachmentAction {
   name?: string;
   options?: OptionField[];
   option_groups?: {
-    text: string
+    text: string;
     options: OptionField[];
   }[];
   selected_options?: OptionField[];
@@ -168,7 +166,7 @@ export interface AttachmentAction {
   url?: string;
 }
 
-export interface OptionField {
+interface OptionField {
   description?: string;
   text: string;
   value: string;
@@ -182,6 +180,7 @@ export interface Confirmation {
   title?: string;
 }
 
+// Used in web-api chat.* API method request parameters
 export interface LinkUnfurls {
   [linkUrl: string]: MessageAttachment;
 }

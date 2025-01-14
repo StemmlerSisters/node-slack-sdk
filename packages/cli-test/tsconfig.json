@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "compilerOptions": {
+    "declaration": true,
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "outDir": "dist",
+    "skipLibCheck": true,
+    "sourceMap": true
+  },
+  "extends": "@tsconfig/recommended/tsconfig.json",
+  "include": ["src/**/*"],
+  "jsdoc": {
+    "out": "support/jsdoc",
+    "access": "public"
+  },
+  "exclude": ["src/**/*.spec.*"],
+  "ts-node": {
+    "esm": true
+  }
+}

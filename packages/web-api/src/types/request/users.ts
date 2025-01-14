@@ -1,5 +1,11 @@
-import { Stream } from 'node:stream';
-import { TokenOverridable, CursorPaginationEnabled, OptionalTeamAssignable, LocaleAware } from './common';
+import type { Stream } from 'node:stream';
+
+import type { CursorPaginationEnabled, LocaleAware, OptionalTeamAssignable, TokenOverridable } from './common';
+
+interface Email {
+  /** @description An email address belonging to a user in the workspace */
+  email: string;
+}
 
 // https://api.slack.com/methods/users.conversations
 export interface UsersConversationsArguments extends TokenOverridable, CursorPaginationEnabled, OptionalTeamAssignable {
@@ -17,27 +23,29 @@ export interface UsersConversationsArguments extends TokenOverridable, CursorPag
   user?: string;
 }
 // https://api.slack.com/methods/users.deletePhoto
-export interface UsersDeletePhotoArguments extends TokenOverridable { }
+export interface UsersDeletePhotoArguments extends TokenOverridable {}
+// https://api.slack.com/methods/users.discoverableContacts.lookup
+export interface UsersDiscoverableContactsLookupArguments extends Email, TokenOverridable {}
 // https://api.slack.com/methods/users.getPresence
 export interface UsersGetPresenceArguments extends TokenOverridable {
   /** @description User to get presence info on. Defaults to the authed user. */
   user?: string;
 }
 // https://api.slack.com/methods/users.identity
-export interface UsersIdentityArguments extends TokenOverridable { }
+export interface UsersIdentityArguments extends TokenOverridable {}
 // https://api.slack.com/methods/users.info
 export interface UsersInfoArguments extends TokenOverridable, LocaleAware {
   /** @description User to get info on. */
   user: string;
 }
 // https://api.slack.com/methods/users.list
-export interface UsersListArguments extends TokenOverridable, CursorPaginationEnabled,
-  LocaleAware, OptionalTeamAssignable { }
+export interface UsersListArguments
+  extends TokenOverridable,
+    CursorPaginationEnabled,
+    LocaleAware,
+    OptionalTeamAssignable {}
 // https://api.slack.com/methods/users.lookupByEmail
-export interface UsersLookupByEmailArguments extends TokenOverridable {
-  /** @description An email address belonging to a user in the workspace */
-  email: string;
-}
+export interface UsersLookupByEmailArguments extends Email, TokenOverridable {}
 // https://api.slack.com/methods/users.setPhoto
 export interface UsersSetPhotoArguments extends TokenOverridable {
   /** @description Image file contents. */

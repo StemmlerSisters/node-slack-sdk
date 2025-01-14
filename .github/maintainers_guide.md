@@ -10,7 +10,7 @@ Maintaining this project requires installing [Node.js](https://nodejs.org). All 
 ### ⚗️ Testing and Linting
 The Node SDK is made up of multiple, individual packages, each with their own tests. As such, tests are run on a per-package basis. However, the top-level directory contains some development dependencies applicable to all packages. As a result, to run tests for any package, first ensure you run `npm install` from the top-level directory. Then, for a given package, navigate to the package's directory (ie, `packages/web-api`) and run `npm install` to install that package's required dependencies. Finally, run `npm test` to run that package's tests. To run just the linting and not the entire test suite, run `npm run lint`.
 
-This project has tests for individual packages as `*.spec.js` files and inside of each's package's `src` directory. It also has integration tests in the `support/integration-tests` directory.
+This project has tests for individual packages as `*.spec.js` files and inside of each's package's `src` directory. Also, for verifying the behavior with the real Slack server-side and developer experience with installed packages, you can run the tests amd scripts under `prod-server-integration-tests`. Refer to the README file in the directory for details. These tests are supposed to be run in the project maintainers' manual execution. They are not part of CI builds for now.
 
 Upon opening a PR, tests are executed by GitHub Actions, our continuous integration system. GitHub Actions runs several, more granular builds in order to report on success and failure in a more targeted way.
 
@@ -24,21 +24,15 @@ Test code should be written in syntax that runs on the oldest supported Node.js 
 
 We have included `launch.json` files that store configuration for `vscode` debugging in each package. This allows you to set breakpoints in test files and interactively debug. Open the project in `vscode` and navigate to the debug screen on the left sidebar. The icon for it looks like a little lock bug with an x inside. At the top in `vscode`, select the configuration to run and press the green play icon to start debugging. Alternatively, on mac, you can press `cmd + shift + d` to get to the debug screen and `F5` to start debugging. If you are using `vscode` debugging, don't forget to lint the source (`npm run lint`) manually.
 
-Also, for verifying the behavior with the real Slack server-side and developer experience with installed packages, you can run the tests amd scripts under `prod-server-integration-tests`. Refer to the README file in the directory for details. These tests are supposed to be run in the project maintainers' manual execution. They are not part of CI builds for now.
 
-### 📄 Generating Documentation
-The documentation is built using [Jekyll](https://jekyllrb.com/) and hosted with GitHub Pages. The source files are contained in the `docs` directory. Reading the Jekyll configuration in `docs/_config.yml` is helpful to understand how the documentation is organized and built.
+### 📄 Managing Documentation
 
-To build the docs locally, navigate to the `docs` directory. First ensure you have Ruby ~2.5.3 and install the dependencies by running `bundle install`. Then, run the command `bundle exec jekyll serve`. You will then be provided with a local URL that you can use to view the build.
+See the [Docs README](https://github.com/slackapi/node-slack-sdk/blob/main/docs/README.md) for information on how the docs site work. 
 
-To build reference documentation, in the root of this repo, run `npm run ref-docs`. This will generate reference docs and put them in the `docs/_reference` directory. Currently, reference docs need to be built manually running this command and checked into GitHub.
-
-**TODO**: Update this doc once building of reference docs is automated to happen on each commit to the repo
-
-Reference docs are built by using various open source tools and formats. This includes [API-Extractor](https://api-extractor.com/), [mdast](https://github.com/syntax-tree/mdast), and [Remark](https://github.com/remarkjs/remark). [Read more about the reference docs pipeline](https://github.com/slackapi/node-slack-sdk/pull/831#issue-299509206).
+The reference docs are generated on every site build, pulling from this repo's files. The site is built automatically on every release via `docs-deploy.yml`. 
 
 ### 🚀 Releases
-_For beta releases, see [**Beta Releases**](https://github.com/slackapi/node-slack-sdk/blob/main/.github/maintainers_guide.md#beta-releases) section below_
+_For beta releases, see [**Beta Releases**](https://github.com/slackapi/node-slack-sdk/blob/main/.github/maintainers_guide.md#-beta-releases) section below_
 
 Releasing can feel intimidating at first, but rest assured: if you make a mistake, don't fret! npm allows you to unpublish a release within the first 72 hours of publishing (you just won’t be able to use the same version number again). Venture on!
 
@@ -56,7 +50,7 @@ Releasing can feel intimidating at first, but rest assured: if you make a mistak
 
 4. For each package to be released, run `npm run test` to verify that tests are passing and code is free of linting errors.
 
-5. On your new branch, bump the version(s) in `package.json` (see [Versioning and Tags](https://github.com/slackapi/node-slack-sdk/blob/main/.github/maintainers_guide.md#versioning-and-tags))
+5. On your new branch, bump the version(s) in `package.json` (see [Versioning and Tags](https://github.com/slackapi/node-slack-sdk/blob/main/.github/maintainers_guide.md#-versioning-and-tags))
 
     - Make a single commit for the version(s) bump, following the format in: ([Example](https://github.com/slackapi/node-slack-sdk/commit/1503609d79abf035e9e21bad7360e124e4211594))
 
@@ -164,6 +158,8 @@ Releasing can feel intimidating at first, but rest assured: if you make a mistak
 
 ### 🔖 Versioning and Tags
 This project is versioned using [Semantic Versioning](http://semver.org/), particularly in the [npm flavor](https://docs.npmjs.com/getting-started/semantic-versioning). Each release is tagged using git. The naming convention for tags is `{package_name}@{version}`. For example, the tag `@slack/web-api@v5.0.0` marks the v5.0.0 release of the `@slack/web-api` package. A single commit will have multiple tags when multiple packages are released simultaneously.
+
+One package that expands upon the standard major.minor.patch version schema typically associated with Semantic Versioning is the `@slack/cli-test` package. This package employs standard major.minor.patch version, in addition to a [build metadata suffix](https://semver.org/#spec-item-10) suffix of the form `+cli.X.Y.Z`, e.g. `0.1.0+cli.2.24.0`. The version after `+cli.` communicates compatibility between the `@slack/cli-test` package and the [Slack Platfrom CLI](https://api.slack.com/automation/quickstart) itself.
 
 ### 🪵 Branches
 `main` is where active development occurs. Long running named feature branches are occasionally created for collaboration on a feature that has a large scope (because everyone cannot push commits to another person's open Pull Request). After a major version increment, a maintenance branch for the older major version is left open (e.g. `v3`, `v4`, etc).

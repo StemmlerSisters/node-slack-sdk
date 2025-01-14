@@ -1,0 +1,50 @@
+{
+  "name": "@slack/cli-test",
+  "version": "2.0.0+cli.2.30.1",
+  "description": "Node.js bindings for the Slack CLI for use in automated testing",
+  "author": "Salesforce, Inc.",
+  "license": "MIT",
+  "keywords": ["slack", "cli", "test"],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist/**/*"],
+  "engines": {
+    "node": ">=18.15.5"
+  },
+  "repository": "slackapi/node-slack-sdk",
+  "publishConfig": {
+    "access": "public"
+  },
+  "bugs": {
+    "url": "https://github.com/slackapi/node-slack-sdk/issues"
+  },
+  "scripts": {
+    "build": "npm run build:clean && tsc",
+    "build:clean": "shx rm -rf ./dist ./coverage",
+    "lint": "npx @biomejs/biome check .",
+    "lint:fix": "npx @biomejs/biome check --write .",
+    "prepare": "npm run build",
+    "mocha": "cross-env SLACK_CLI_PATH=/doesnt/matter mocha --config .mocharc.json src/*.spec.ts src/**/*.spec.ts src/**/**/*.spec.ts",
+    "test": "npm run lint && npm run build && c8 npm run mocha"
+  },
+  "dependencies": {
+    "tree-kill": "^1.2.2",
+    "winston": "^3.8.2"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@tsconfig/recommended": "^1.0.6",
+    "@types/chai": "^4.3.16",
+    "@types/mocha": "^10.0.6",
+    "@types/node": "^22.5.2",
+    "@types/sinon": "^17.0.3",
+    "c8": "^10.1.2",
+    "chai": "^4.4.1",
+    "cross-env": "^7.0.3",
+    "mocha": "^11.0.1",
+    "shx": "^0.3.4",
+    "sinon": "^19.0.2",
+    "ts-node": "^10.9.2",
+    "typescript": "5.7.3"
+  }
+}

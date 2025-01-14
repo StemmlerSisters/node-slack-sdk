@@ -10,19 +10,25 @@ const creds = { client_id: 'C1234', client_secret: '1234.567' };
 // -- sad path
 expectError(web.openid.connect.token()); // lacking argument
 expectError(web.openid.connect.token({})); // empty argument
-expectError(web.openid.connect.token({
-  client_id: 'C1234', // missing client_secret
-}));
-expectError(web.openid.connect.token({
-  client_secret: '1234.567', // missing `client_id`
-}));
+expectError(
+  web.openid.connect.token({
+    client_id: 'C1234', // missing client_secret
+  }),
+);
+expectError(
+  web.openid.connect.token({
+    client_secret: '1234.567', // missing `client_id`
+  }),
+);
 // -- happy path
-expectAssignable<Parameters<typeof web.openid.connect.token>>([{
-  ...creds,
-}]);
+expectAssignable<Parameters<typeof web.openid.connect.token>>([
+  {
+    ...creds,
+  },
+]);
 
 // openid.connect.userInfo
 // -- sad path
-expectError(web.openid.connect.userInfo()); // lacking argument
 // -- happy path
 expectAssignable<Parameters<typeof web.openid.connect.userInfo>>([{}]); // all optional args
+expectAssignable<Parameters<typeof web.openid.connect.userInfo>>([]); // no arg is fine

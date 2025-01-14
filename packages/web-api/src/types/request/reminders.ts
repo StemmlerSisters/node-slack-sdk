@@ -1,4 +1,5 @@
-import { OptionalTeamAssignable, TokenOverridable } from './common';
+import type { OptionalArgument } from '../helpers';
+import type { OptionalTeamAssignable, TokenOverridable } from './common';
 
 interface ReminderRecurrenceDailyMonthlyYearly {
   /** @description Specifies the repeating behavior of a reminder. */
@@ -9,7 +10,7 @@ interface ReminderRecurrenceWeekly {
   /** @description Specifies the repeating behavior of a reminder. */
   frequency: 'weekly';
   /** @description Specifies the day-of-the-week repeating behaviour when `frequency` is set to `weekly`. */
-  weekdays: [DaysOfTheWeek, ...DaysOfTheWeek[]]
+  weekdays: [DaysOfTheWeek, ...DaysOfTheWeek[]];
 }
 type ReminderRecurrence = ReminderRecurrenceWeekly | ReminderRecurrenceDailyMonthlyYearly;
 // https://api.slack.com/methods/reminders.add
@@ -51,4 +52,4 @@ export interface RemindersInfoArguments extends TokenOverridable, OptionalTeamAs
   reminder: string;
 }
 // https://api.slack.com/methods/reminders.list
-export interface RemindersListArguments extends TokenOverridable, OptionalTeamAssignable { }
+export type RemindersListArguments = OptionalArgument<TokenOverridable & OptionalTeamAssignable>;

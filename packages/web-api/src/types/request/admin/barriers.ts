@@ -1,3 +1,5 @@
+import type { OptionalArgument } from '../../helpers';
+
 import type { CursorPaginationEnabled, TokenOverridable } from '../common';
 
 interface BarrierID {
@@ -22,7 +24,7 @@ export interface AdminBarriersCreateArguments extends TokenOverridable {
 export interface AdminBarriersDeleteArguments extends BarrierID, TokenOverridable {}
 
 // https://api.slack.com/methods/admin.barriers.list
-export interface AdminBarriersListArguments extends TokenOverridable, CursorPaginationEnabled { }
+export type AdminBarriersListArguments = OptionalArgument<TokenOverridable & CursorPaginationEnabled>;
 
 // https://api.slack.com/methods/admin.barriers.update
 export interface AdminBarriersUpdateArguments extends AdminBarriersCreateArguments, BarrierID {}

@@ -1,5 +1,7 @@
 # Slack Web API
 
+[![codecov](https://codecov.io/gh/slackapi/node-slack-sdk/graph/badge.svg?token=OcQREPvC7r&flag=web-api)](https://codecov.io/gh/slackapi/node-slack-sdk)
+
 The `@slack/web-api` package contains a simple, convenient, and configurable HTTP client for making requests to Slack's
 [Web API](https://api.slack.com/web). Use it in your app to call any of the over 130
 [methods](https://api.slack.com/methods), and let it handle formatting, queuing, retrying, pagination, and more.
@@ -21,7 +23,7 @@ $ npm install @slack/web-api
 ## Usage
 
 These examples show the most common features of the `WebClient`. You'll find even more extensive [documentation on the
-package's website](https://slack.dev/node-slack-sdk/web-api).
+package's website](https://tools.slack.dev/node-slack-sdk/web-api).
 
 <!-- END: Remove before copying into the docs directory -->
 
@@ -99,7 +101,7 @@ const conversationId = '...';
 **Tip**: If you're using an editor that supports TypeScript, even if you're not using TypeScript to write your code,
 you'll get hints for all the arguments each method supports. This helps you save time by reducing the number of
 times you need to pop out to a webpage to check the reference. There's more information about [using
-TypeScript](https://slack.dev/node-slack-sdk/typescript) with this package in the documentation website.
+TypeScript](https://tools.slack.dev/node-slack-sdk/typescript) with this package in the documentation website.
 
 **Tip**: Use the [Block Kit Builder](https://api.slack.com/tools/block-kit-builder) for a playground
 where you can prototype your message's look and feel.
@@ -172,7 +174,7 @@ There are a few more types of errors that you might encounter, each with one of 
 
 * `ErrorCode.RateLimitedError`: The Web API cannot fulfill the API method call because your app has made too many
   requests too quickly. This error has a `retryAfter` property with the number of seconds you should wait before trying
-  again. See [the documentation on rate limit handling](https://slack.dev/node-slack-sdk/web-api/#rate-limits) to
+  again. See [the documentation on rate limit handling](https://tools.slack.dev/node-slack-sdk/web-api/#rate-limits) to
   understand how the client will automatically deal with these problems for you.
 
 * `ErrorCode.HTTPError`: The HTTP response contained an unfamiliar status code. The Web API only responds with `200`
@@ -364,7 +366,7 @@ retrying the API call. If you'd like to opt out of that behavior, set the `rejec
 
 ### More
 
-The [documentation website](https://slack.dev/node-slack-sdk/web-api) has information about these additional features of
+The [documentation website](https://tools.slack.dev/node-slack-sdk/web-api) has information about these additional features of
 the `WebClient`:
 
 *  Upload a file with a `Buffer` or a `ReadableStream`.

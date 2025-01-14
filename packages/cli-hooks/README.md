@@ -1,5 +1,7 @@
 # Slack CLI Hooks
 
+[![codecov](https://codecov.io/gh/slackapi/node-slack-sdk/graph/badge.svg?token=OcQREPvC7r&flag=cli-hooks)](https://codecov.io/gh/slackapi/node-slack-sdk)
+
 The `@slack/cli-hooks` package contains scripts that implement the contract
 between the [Slack CLI][cli] and [Bolt for JavaScript][bolt].
 
@@ -74,7 +76,7 @@ Below is an example `slack.json` file that overrides the default `start` hook:
 ```json
 {
   "hooks": {
-    "get-hooks": "npx -q --no-install -p @slack/cli-hooks slack-cli-get-hooks",
+    "get-hooks": "NODE_NO_WARNINGS=1 npx -q --no-install -p @slack/cli-hooks slack-cli-get-hooks",
     "start": "npm run dev"
   }
 }

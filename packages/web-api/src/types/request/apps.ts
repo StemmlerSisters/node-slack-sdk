@@ -1,12 +1,13 @@
-import type { AppID, CursorPaginationEnabled, TokenOverridable, OAuthCredentials } from './common';
+import type { OptionalArgument } from '../helpers';
+
+import type { AppID, CursorPaginationEnabled, OAuthCredentials, TokenOverridable } from './common';
 import type { Manifest } from './manifest';
 
 // https://api.slack.com/methods/apps.connections.open
-export interface AppsConnectionsOpenArguments { }
+export type AppsConnectionsOpenArguments = OptionalArgument<object>;
 
 // https://api.slack.com/methods/apps.event.authorizations.list
-export interface AppsEventAuthorizationsListArguments
-  extends TokenOverridable, CursorPaginationEnabled {
+export interface AppsEventAuthorizationsListArguments extends TokenOverridable, CursorPaginationEnabled {
   event_context: string;
 }
 
@@ -32,4 +33,6 @@ export interface AppsManifestValidateArguments extends Partial<AppID>, TokenOver
 }
 
 // https://api.slack.com/methods/apps.uninstall
-export interface AppsUninstallArguments extends Pick<OAuthCredentials, 'client_id' | 'client_secret'> {}
+export interface AppsUninstallArguments
+  extends Pick<OAuthCredentials, 'client_id' | 'client_secret'>,
+    TokenOverridable {}

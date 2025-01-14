@@ -1,6 +1,8 @@
-import { IncomingHttpHeaders } from 'http';
-import { AxiosResponse } from 'axios';
-import { WebAPICallResult } from './WebClient';
+import type { IncomingHttpHeaders } from 'node:http';
+
+import type { AxiosResponse } from 'axios';
+
+import type { WebAPICallResult } from './WebClient';
 
 /**
  * All errors produced by this package adhere to this interface
@@ -31,7 +33,7 @@ export interface WebAPIFileUploadInvalidArgumentsError extends CodedError {
   code: ErrorCode.FileUploadInvalidArgumentsError;
   data: WebAPICallResult & {
     error: string;
-  }
+  };
 }
 
 export interface WebAPIPlatformError extends CodedError {
@@ -51,7 +53,7 @@ export interface WebAPIHTTPError extends CodedError {
   statusCode: number;
   statusMessage: string;
   headers: IncomingHttpHeaders;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  // biome-ignore lint/suspicious/noExplicitAny: HTTP response bodies might be anything
   body?: any;
 }
 
@@ -73,14 +75,17 @@ export function errorWithCode(error: Error, code: ErrorCode): CodedError {
 /**
  * A factory to create WebAPIRequestError objects
  * @param original - original error
+ * @param attachOriginal - config indicating if 'original' property should be added on the error object
  */
-export function requestErrorWithOriginal(original: Error): WebAPIRequestError {
+export function requestErrorWithOriginal(original: Error, attachOriginal: boolean): WebAPIRequestError {
   const error = errorWithCode(
     new Error(`A request error occurred: ${original.message}`),
     ErrorCode.RequestError,
   ) as Partial<WebAPIRequestError>;
-  error.original = original;
-  return (error as WebAPIRequestError);
+  if (attachOriginal) {
+    error.original = original;
+  }
+  return error as WebAPIRequestError;
 }
 
 /**
@@ -95,27 +100,27 @@ export function httpErrorFromResponse(response: AxiosResponse): WebAPIHTTPError 
   error.statusCode = response.status;
   error.statusMessage = response.statusText;
   const nonNullHeaders: Record<string, string> = {};
-  Object.keys(response.headers).forEach((k) => {
+  for (const k of Object.keys(response.headers)) {
     if (k && response.headers[k]) {
       nonNullHeaders[k] = response.headers[k];
     }
-  });
+  }
   error.headers = nonNullHeaders;
   error.body = response.data;
-  return (error as WebAPIHTTPError);
+  return error as WebAPIHTTPError;
 }
 
 /**
  * A factory to create WebAPIPlatformError objects
  * @param result - Web API call result
  */
-export function platformErrorFromResult(result: WebAPICallResult & { error: string; }): WebAPIPlatformError {
+export function platformErrorFromResult(result: WebAPICallResult & { error: string }): WebAPIPlatformError {
   const error = errorWithCode(
     new Error(`An API error occurred: ${result.error}`),
     ErrorCode.PlatformError,
   ) as Partial<WebAPIPlatformError>;
   error.data = result;
-  return (error as WebAPIPlatformError);
+  return error as WebAPIPlatformError;
 }
 
 /**
@@ -128,5 +133,5 @@ export function rateLimitedErrorWithDelay(retrySec: number): WebAPIRateLimitedEr
     ErrorCode.RateLimitedError,
   ) as Partial<WebAPIRateLimitedError>;
   error.retryAfter = retrySec;
-  return (error as WebAPIRateLimitedError);
+  return error as WebAPIRateLimitedError;
 }

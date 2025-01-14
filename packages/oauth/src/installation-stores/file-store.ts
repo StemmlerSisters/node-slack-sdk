@@ -1,8 +1,9 @@
-import fs from 'fs';
-import path from 'path';
-import { homedir } from 'os';
-import { Installation, InstallationStore, InstallationQuery } from '../index';
-import { Logger } from '../logger';
+import fs from 'node:fs';
+import { homedir } from 'node:os';
+import path from 'node:path';
+
+import type { Installation, InstallationQuery, InstallationStore } from '../index';
+import type { Logger } from '../logger';
 
 export interface FileInstallationOptions {
   baseDir?: string;
@@ -81,15 +82,17 @@ export default class FileInstallationStore implements InstallationStore {
           }
         } catch (err) {
           logger?.debug(`The user-token installation for the request user (user_id: ${query.userId}) was not found.`);
-          delete installation.user.token;
-          delete installation.user.refreshToken;
-          delete installation.user.expiresAt;
-          delete installation.user.scopes;
+          installation.user.token = undefined;
+          installation.user.refreshToken = undefined;
+          installation.user.expiresAt = undefined;
+          installation.user.scopes = undefined;
         }
       }
       return installation;
     } catch (err) {
-      throw new Error(`No installation data found (enterprise_id: ${query.enterpriseId}, team_id: ${query.teamId}, user_id: ${query.userId})`);
+      throw new Error(
+        `No installation data found (enterprise_id: ${query.enterpriseId}, team_id: ${query.teamId}, user_id: ${query.userId})`,
+      );
     }
   }
 
@@ -112,7 +115,9 @@ export default class FileInstallationStore implements InstallationStore {
     }
 
     try {
-      filesToDelete.forEach((filePath) => deleteFile(path.resolve(`${installationDir}/${filePath}`)));
+      for (const filePath of filesToDelete) {
+        deleteFile(path.resolve(`${installationDir}/${filePath}`));
+      }
     } catch (err) {
       throw new Error(`Failed to delete installation from FileInstallationStore (error: ${err})`);
     }
@@ -121,7 +126,7 @@ export default class FileInstallationStore implements InstallationStore {
   private getInstallationDir(enterpriseId = '', teamId = '', isEnterpriseInstall = false): string {
     let installDir = `${this.baseDir}/${enterpriseId}`;
     if (teamId !== '' && !isEnterpriseInstall) {
-      installDir += (enterpriseId !== '') ? `-${teamId}` : `${teamId}`;
+      installDir += enterpriseId !== '' ? `-${teamId}` : `${teamId}`;
     }
     return installDir;
   }

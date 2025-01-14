@@ -1,4 +1,9 @@
-export { AdminAnalyticsGetFileResponse, AdminAnalyticsMemberDetails, AdminAnalyticsPublicChannelDetails, AdminAnalyticsPublicChannelMetadataDetails } from './AdminAnalyticsGetFileResponse';
+export {
+  AdminAnalyticsGetFileResponse,
+  AdminAnalyticsMemberDetails,
+  AdminAnalyticsPublicChannelDetails,
+  AdminAnalyticsPublicChannelMetadataDetails,
+} from './AdminAnalyticsGetFileResponse';
 export { AdminAppsActivitiesListResponse } from './AdminAppsActivitiesListResponse';
 export { AdminAppsApproveResponse } from './AdminAppsApproveResponse';
 export { AdminAppsApprovedListResponse } from './AdminAppsApprovedListResponse';
@@ -111,6 +116,9 @@ export { AppsPermissionsScopesListResponse } from './AppsPermissionsScopesListRe
 export { AppsPermissionsUsersListResponse } from './AppsPermissionsUsersListResponse';
 export { AppsPermissionsUsersRequestResponse } from './AppsPermissionsUsersRequestResponse';
 export { AppsUninstallResponse } from './AppsUninstallResponse';
+export { AssistantThreadsSetStatusResponse } from './AssistantThreadsSetStatusResponse';
+export { AssistantThreadsSetSuggestedPromptsResponse } from './AssistantThreadsSetSuggestedPromptsResponse';
+export { AssistantThreadsSetTitleResponse } from './AssistantThreadsSetTitleResponse';
 export { AuthRevokeResponse } from './AuthRevokeResponse';
 export { AuthTeamsListResponse } from './AuthTeamsListResponse';
 export { AuthTestResponse } from './AuthTestResponse';
@@ -125,6 +133,12 @@ export { CallsInfoResponse } from './CallsInfoResponse';
 export { CallsParticipantsAddResponse } from './CallsParticipantsAddResponse';
 export { CallsParticipantsRemoveResponse } from './CallsParticipantsRemoveResponse';
 export { CallsUpdateResponse } from './CallsUpdateResponse';
+export { CanvasesAccessDeleteResponse } from './CanvasesAccessDeleteResponse';
+export { CanvasesAccessSetResponse } from './CanvasesAccessSetResponse';
+export { CanvasesCreateResponse } from './CanvasesCreateResponse';
+export { CanvasesDeleteResponse } from './CanvasesDeleteResponse';
+export { CanvasesEditResponse } from './CanvasesEditResponse';
+export { CanvasesSectionsLookupResponse } from './CanvasesSectionsLookupResponse';
 export { ChannelsArchiveResponse } from './ChannelsArchiveResponse';
 export { ChannelsCreateResponse } from './ChannelsCreateResponse';
 export { ChannelsHistoryResponse } from './ChannelsHistoryResponse';
@@ -153,9 +167,11 @@ export { ChatUpdateResponse } from './ChatUpdateResponse';
 export { ConversationsAcceptSharedInviteResponse } from './ConversationsAcceptSharedInviteResponse';
 export { ConversationsApproveSharedInviteResponse } from './ConversationsApproveSharedInviteResponse';
 export { ConversationsArchiveResponse } from './ConversationsArchiveResponse';
+export { ConversationsCanvasesCreateResponse } from './ConversationsCanvasesCreateResponse';
 export { ConversationsCloseResponse } from './ConversationsCloseResponse';
 export { ConversationsCreateResponse } from './ConversationsCreateResponse';
 export { ConversationsDeclineSharedInviteResponse } from './ConversationsDeclineSharedInviteResponse';
+export { ConversationsExternalInvitePermissionsSetResponse } from './ConversationsExternalInvitePermissionsSetResponse';
 export { ConversationsHistoryResponse } from './ConversationsHistoryResponse';
 export { ConversationsInfoResponse } from './ConversationsInfoResponse';
 export { ConversationsInviteResponse } from './ConversationsInviteResponse';
@@ -170,6 +186,9 @@ export { ConversationsMembersResponse } from './ConversationsMembersResponse';
 export { ConversationsOpenResponse } from './ConversationsOpenResponse';
 export { ConversationsRenameResponse } from './ConversationsRenameResponse';
 export { ConversationsRepliesResponse } from './ConversationsRepliesResponse';
+export { ConversationsRequestSharedInviteApproveResponse } from './ConversationsRequestSharedInviteApproveResponse';
+export { ConversationsRequestSharedInviteDenyResponse } from './ConversationsRequestSharedInviteDenyResponse';
+export { ConversationsRequestSharedInviteListResponse } from './ConversationsRequestSharedInviteListResponse';
 export { ConversationsSetPurposeResponse } from './ConversationsSetPurposeResponse';
 export { ConversationsSetTopicResponse } from './ConversationsSetTopicResponse';
 export { ConversationsUnarchiveResponse } from './ConversationsUnarchiveResponse';
@@ -258,6 +277,8 @@ export { StarsRemoveResponse } from './StarsRemoveResponse';
 export { TeamAccessLogsResponse } from './TeamAccessLogsResponse';
 export { TeamBillableInfoResponse } from './TeamBillableInfoResponse';
 export { TeamBillingInfoResponse } from './TeamBillingInfoResponse';
+export { TeamExternalTeamsDisconnectResponse } from './TeamExternalTeamsDisconnectResponse';
+export { TeamExternalTeamsListResponse } from './TeamExternalTeamsListResponse';
 export { TeamInfoResponse } from './TeamInfoResponse';
 export { TeamIntegrationLogsResponse } from './TeamIntegrationLogsResponse';
 export { TeamPreferencesListResponse } from './TeamPreferencesListResponse';
@@ -272,6 +293,7 @@ export { UsergroupsUsersListResponse } from './UsergroupsUsersListResponse';
 export { UsergroupsUsersUpdateResponse } from './UsergroupsUsersUpdateResponse';
 export { UsersConversationsResponse } from './UsersConversationsResponse';
 export { UsersDeletePhotoResponse } from './UsersDeletePhotoResponse';
+export { UsersDiscoverableContactsLookupResponse } from './UsersDiscoverableContactsLookupResponse';
 export { UsersGetPresenceResponse } from './UsersGetPresenceResponse';
 export { UsersIdentityResponse } from './UsersIdentityResponse';
 export { UsersInfoResponse } from './UsersInfoResponse';

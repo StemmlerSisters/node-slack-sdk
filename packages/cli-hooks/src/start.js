@@ -1,9 +1,9 @@
 #!/usr/bin/env node
 
-import { fileURLToPath } from 'url';
-import childProcess from 'child_process';
-import path from 'path';
-import fs from 'fs';
+import childProcess from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Implementation of the start hook that begins a new process to run the app.
@@ -19,8 +19,6 @@ if (fs.realpathSync(process.argv[1]) === fileURLToPath(import.meta.url)) {
  * @param {string} cwd - The current working directory of the project.
  */
 export default function start(cwd) {
-  validateEnvironment();
-
   const customPath = process.env.SLACK_CLI_CUSTOM_FILE_PATH;
   const pkgJSONMain = getPackageJSONMain(cwd);
   const pkgJSONDefault = 'app.js';
@@ -35,7 +33,7 @@ export default function start(cwd) {
     process.stderr.write(data);
   });
   app.on('close', (code) => {
-    console.log(`Local run exited with code ${code}`); // eslint-disable-line no-console
+    console.log(`Local run exited with code ${code}`);
   });
 }
 
@@ -51,22 +49,5 @@ function getPackageJSONMain(cwd) {
     return main;
   } catch {
     return undefined;
-  }
-}
-
-/**
- * Confirms environment variables are prepared by the CLI.
- */
-function validateEnvironment() {
-  const missingTokenError = `Missing the {type} token needed to start the app with Socket Mode.
-Hints: Setting the {token} environment variable is required.
-Check: Confirm that you are using the latest version of the Slack CLI.`;
-  if (!process.env.SLACK_CLI_XOXB) {
-    const missingBotTokenError = missingTokenError.replace('{type}', 'bot').replace('{token}', 'SLACK_CLI_XOXB');
-    throw new Error(missingBotTokenError);
-  }
-  if (!process.env.SLACK_CLI_XAPP) {
-    const missingAppTokenError = missingTokenError.replace('{type}', 'app').replace('{token}', 'SLACK_CLI_XAPP');
-    throw new Error(missingAppTokenError);
   }
 }
